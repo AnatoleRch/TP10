@@ -17,7 +17,7 @@ private ArrayList<LocalDate> exeption;
     /**
      * Constructs a repetitive event
      *
-     * @param title the title of this event
+     * @param title the title of this event 
      * @param start the start of this event
      * @param duration myDuration in seconds
      * @param frequency one of :
