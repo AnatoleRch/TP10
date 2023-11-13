@@ -49,17 +49,16 @@ private ArrayList<LocalDate> exeption;
                 return false; 
             }
         }
-        if (super.isInDay(aDay)) {
-            return true;
-        }
         int compt = 0;
-        LocalDate date = (LocalDate) ChronoLocalDate.from(this.getStart());
-        boolean a=false;
-        while ( ChronoLocalDate.from(this.getStart().plus(compt, frequency)).isBefore(aDay)) {
-            a = super.isInDay(aDay);
-            compt=compt+1;
+        while ( ChronoLocalDate.from(this.getStart().plus(compt, frequency)).isBefore(aDay) || ChronoLocalDate.from(this.getStart().plus(compt, frequency)).isEqual(aDay)) {
+            int a=aDay.compareTo(ChronoLocalDate.from(this.getStart().plus(compt, frequency)));
+            int b=aDay.compareTo(ChronoLocalDate.from(this.getStart().plus(this.getDuration()).plus(compt, frequency)));
+            if (a>=0 && b<=0) {
+                return true;
+            }
+            compt = compt + 1;
         }
-        return a;
+        return false;
     }
 
     /**

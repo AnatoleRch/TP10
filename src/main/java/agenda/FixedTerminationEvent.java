@@ -3,6 +3,7 @@ package agenda;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -11,7 +12,8 @@ import java.time.temporal.ChronoUnit;
  */
 public class FixedTerminationEvent extends RepetitiveEvent {
 
-    
+    private LocalDate terminationInclusive;
+    private long numberOfOccurrences;
     /**
      * Constructs a fixed terminationInclusive event ending at a given date
      *
@@ -27,9 +29,13 @@ public class FixedTerminationEvent extends RepetitiveEvent {
      * @param terminationInclusive the date when this event ends
      */
     public FixedTerminationEvent(String title, LocalDateTime start, Duration duration, ChronoUnit frequency, LocalDate terminationInclusive) {
-         super(title, start, duration, frequency);
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        super(title, start, duration, frequency);
+        this.terminationInclusive=terminationInclusive;
+        int compt = 0;
+        while ( ChronoLocalDate.from(this.getStart().plus(compt, frequency)).isBefore(terminationInclusive) || ChronoLocalDate.from(this.getStart().plus(compt, frequency)).isEqual(terminationInclusive)) {
+            compt = compt + 1;
+        }
+        this.numberOfOccurrences=compt;
 
     }
 
@@ -49,8 +55,18 @@ public class FixedTerminationEvent extends RepetitiveEvent {
      */
     public FixedTerminationEvent(String title, LocalDateTime start, Duration duration, ChronoUnit frequency, long numberOfOccurrences) {
         super(title, start, duration, frequency);
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        this.numberOfOccurrences=numberOfOccurrences;
+        this.terminationInclusive= start.toLocalDate().plus(numberOfOccurrences-1, frequency);
+
+    }
+
+    @Override
+    public boolean isInDay(LocalDate aDay) {
+            if (aDay.isAfter(terminationInclusive)){
+                return false; 
+            }else{
+                return super.isInDay(aDay);
+            }
     }
 
     /**
@@ -58,13 +74,11 @@ public class FixedTerminationEvent extends RepetitiveEvent {
      * @return the termination date of this repetitive event
      */
     public LocalDate getTerminationDate() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");   
+        return terminationInclusive;   
     }
 
     public long getNumberOfOccurrences() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        return numberOfOccurrences;
     }
         
 }
